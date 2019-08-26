@@ -2,11 +2,13 @@
   <div class="side-bar">
     <div class="form-group">
       <label for="first">Number 1</label>
+      <div v-if="!$v.first.required" class="error">First Number is required</div>
       <input type="text" v-model="first" placeholder="Enter number one" class="form-control" />
     </div>
 
     <div class="form-group">
       <label for="second">Number 2</label>
+      <div v-if="!$v.second.required" class="error">Second Number is required</div>
       <input type="text" v-model="second" placeholder="Enter number two" class="form-control" />
     </div>
 
@@ -20,12 +22,14 @@
       </select>
     </div>
 
-    <button @click="submitData">Post</button>
+    <button @click="submitData" :disabled="$v.first.$invalid || $v.second.$invalid">Post</button>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import uuid from "uuid/v1";
+import { required } from "vuelidate/lib/validators";
 import EventBus from "../eventBus";
 export default {
   data() {
@@ -36,10 +40,24 @@ export default {
     };
   },
 
+  validations: {
+    first: {
+      required
+    },
+    second: {
+      required
+    }
+  },
+
   methods: {
     async submitData() {
       let expression = `${this.first} ${this.operation} ${this.second}`;
-      console.log(expression);
+
+      try {
+      } catch (error) {}
+
+      try {
+      } catch (error) {}
       let { data } = await axios.post("http://api.mathjs.org/v4/", {
         expr: expression,
         precision: 14
@@ -48,11 +66,11 @@ export default {
       let result;
 
       let randomNumber = Math.round(Math.random());
-      console.log(randomNumber);
 
       if (randomNumber === 1) {
         randomNumber = Math.ceil(Math.random() * 4000);
         result = {
+          id: uuid(),
           number1: this.first,
           number2: this.second,
           response: randomNumber,
@@ -61,6 +79,7 @@ export default {
         };
       } else {
         result = {
+          id: uuid(),
           number1: this.first,
           number2: this.second,
           response: data.result,
@@ -68,8 +87,6 @@ export default {
           pass: true
         };
       }
-
-      console.log("RESULT", result);
 
       EventBus.$emit("RESULT", result);
     }
@@ -96,5 +113,9 @@ button {
   padding: 10px;
   background-color: #ba9313;
   border-radius: 15px;
+}
+
+.error {
+  color: red;
 }
 </style>

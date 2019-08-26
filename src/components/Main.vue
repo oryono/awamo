@@ -11,17 +11,12 @@
         <th>Remove</th>
       </thead>
       <tbody>
-        <tr v-for="(result, index) in results" :key="index">
-          <td>{{result.number1}}</td>
-          <td>{{result.number2}}</td>
-          <td>{{result.response}}</td>
-          <td>{{result.expected}}</td>
-          <td v-if="result.pass">PASSED</td>
-          <td v-else>FAILED</td>
-          <td>
-            <button style="color: white">Remove</button>
-          </td>
-        </tr>
+        <result-row
+          v-for="(result, index) in results"
+          :key="result.id"
+          :result="result"
+          :index="index"
+        ></result-row>
       </tbody>
     </table>
   </main>
@@ -29,22 +24,62 @@
 
 <script>
 import EventBus from "../eventBus";
+import resultRow from "../components/resultRow";
 export default {
+  components: {
+    resultRow
+  },
   data() {
     return {
       results: [],
-      styleObject: {}
+      styleObject: {
+        backgroundColor: "red"
+      }
     };
   },
 
   mounted() {
+    EventBus.$on("REMOVE_RESULT", index => {
+      console.log("Removing shit", index);
+      this.results.splice(index, 1);
+    });
+
     EventBus.$on("RESULT", result => {
-      console.log("RESULT", result);
       this.results.push(result);
     });
+  },
+
+  methods: {
+    setRowColor: function(result) {
+      if (result.pass) {
+        this.styleObject.backgroundColor = "green";
+      } else {
+        this.styleObject.backgroundColor = "red";
+      }
+    }
   }
 };
 </script>
 
-<style>
+<style scoped>
+table {
+  width: 100%;
+}
+
+table tr {
+  border-bottom: solid 1px black;
+}
+
+table thead {
+  background-color: black;
+  color: burlywood;
+  border: none;
+  padding: 10px;
+}
+
+table td,
+th {
+  padding: 10px;
+  border: none;
+}
 </style>
