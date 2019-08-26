@@ -40,7 +40,6 @@ export default {
 
   mounted() {
     EventBus.$on("REMOVE_RESULT", index => {
-      console.log("Removing shit", index);
       this.results.splice(index, 1);
     });
 

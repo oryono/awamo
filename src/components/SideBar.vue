@@ -52,12 +52,6 @@ export default {
   methods: {
     async submitData() {
       let expression = `${this.first} ${this.operation} ${this.second}`;
-
-      try {
-      } catch (error) {}
-
-      try {
-      } catch (error) {}
       let { data } = await axios.post("http://api.mathjs.org/v4/", {
         expr: expression,
         precision: 14
